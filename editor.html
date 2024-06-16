@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ZZZeditor</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body onload='init();'>
+<div id= "editorUI" style= "display:none;">
+  <textarea id="paTx" cols="136" rows="8" maxlength="480000" placeholder="free text"></textarea>
+  <div id= "paIp">
+    <input type="text" id="paCm" size="32" rows="1" maxlength="120" placeholder="Input Lat Char"/>
+  </div>
+  <div id= "paDm">xxxYYY</div>
+</div> 
+
+<script type="text/ecmascript" src="cap.js"></script>
+<script type="text/ecmascript" src="dict.js"></script>
+<script type="text/ecmascript" src="editor.js"></script>
+<script type="text/ecmascript">
+
+let initTx = "";
+const paTxMaxChar = 4000;
+function init() {
+  const fName = "init"; const loc = document.location;
+  paCm.style = `${ffam} font-size: 18px;`;
+  paTx.addEventListener("input", txBoxUpdate);
+  paCm.addEventListener("input", txBoxUpdate);
+  switch(loc.search) {
+  case "?1" : break;
+  case "?2" : txBox.value = atStack2; break;
+  case "?3" : txBox.value = umQviewImg; break;
+  }
+  paDm.innerText = "bbb";
+console.log(fName+` : pathname=${document.location.pathname}`);
+  let div = document.createElement("div"); div.id = "opening";
+  div.textContent = "this is sumu, mouse over this text to start func. auto transition in 8 sec..."; document.body.appendChild(div);
+  div.addEventListener("mouseover", function(e) { editorUI.style = "display:block;"; opening.remove(); },false);
+  setTimeout(() => { editorUI.style = "display:block;"; if(document.getElementById("opening")) opening.remove(); }, 8000);
+  document.title = ttEdt;
+  initTx = convNoteFunc(condsTxJp); let natTmp = natsTx.split("\n");
+  for(let i=1; i<natTmp.length; i++) { if(natTmp[i] == "") continue; let p = natTmp[i].split(", ");
+    if(p[3] == "") initTx += `${p[0]}, ${p[1]}|${p[2]}`+"\n"; else initTx += `${p[0]}, ${p[1]}|${p[2]}|${p[3]}`+"\n"; 
+  }
+  csv2objArr(initTx.split("\n"),", ",conds);
+  document.documentElement.addEventListener("keydown", keyHandler, false); 
+  window.addEventListener("beforeunload", (event) => { subWinClose(); });
+  mus.basReInit();
+  tsm.ts = tsm.gt();
+console.log(`${fName}: tsm.ts=${tsm.ts}`);
+}
+let tmpCond = [];
+let tmpRe = [];
+let scrollPos = 0;
+let mai = { exp: "", ret:[] };
+let stats = [];
+let timCI = null;
+let csvArr = [];
+let txBoxChange = 0;
+let mdEd = 0;
+let mmLd = 0;
+let mmTx = "";
+let cands = [];  candp = 0;
+let reDI = 0;
+let dTsv = 0;
+let txTarg = [];
+function txBoxUpdate(e) {
+  const fName = "txBoxUpdate";
+console.log(`${fName}: target.id=${e.target.id}`);
+  
+  let val = e.target.value; let retUpdate = {}; let procId, procArr;
+  switch(e.target.id) {
+  case "paTx":
+    if(val.length > paTxMaxChar) {
+      alert(`${fName}: 入力文字数上限 ${paTxMaxChar}文字まで後続処理を行います。`);
+      val = val.substr(0, paTxMaxChar);
+    }
+    txTarg = val.split("\n"); let cnt = 0; for(cnt=0;cnt<txTarg.length;cnt++) { if(txTarg[cnt].substr(0,4) != "$ust") break; }
+    if(cnt > 0) { mus.cmdHd = txTarg.splice(0, cnt); let result = mus.basReUS(); }
+    txTarg = txu.sc(txTarg);
+    let tabCnt = 0; let tmpCnt = 0; dTsv = 0;
+    for(let i=0;i<txTarg.length;i++) { let p = txTarg[i]; if(p == "") continue; tmpCnt = p.split("\t").length; 
+      if(i == 0) { if(tmpCnt < 2) { 
+console.log(`${fName}: 1行目 tabがありません`); 
+        break;} tabCnt = tmpCnt; continue; }
+      if(tabCnt != tmpCnt) { 
+console.log(`${fName}: tab数不一致 Line${i+1} ${p.substr(0,24)}`);
+      dTsv = 0; break; } else { dTsv = 1; }
+    }
+    if(dTsv && tabCnt > 0) {
+console.log(`${fName}: tabCnt=${tabCnt}`);
+      if(txu.cmd.$ == "") {
+        txu.cmd.$ = "$tsv 1 wdJpn.csv C1,C2,C3,C4";
+        let tmpHd = "C1"; for(let i=0;i<tabCnt;i++) { tmpHd += "\t" + `C${i+2}`; } txTarg = [tmpHd].concat(txTarg);
+      }
+    }
+    let tmpArr = []; 
+    if(dTsv) { csvArr = []; for(let i=0;i<txTarg.length;i++) {
+        let tmp = txTarg[i].split(" "+"//")[0].trimEnd(); if(tmp == "") continue; tmpArr.push(tmp);
+      } tsvConfig.make(tmpArr, txu.cmd.$.split(" ")); procId = "csvTab", procArr = csvArr;
+    } else {
+      procId = "txFree", procArr = txTarg;
+    }
+    removeAllChild(paDm);
+    retUpdate = demoAreaUpdate(paDm, procId, procArr, ""); scrollPos = 0;
+    break;
+    
+  case "paCm":
+    let rsn = ciBuf.r;
+    if(val[0] == "$") return;
+    reDI = 0; if(val.length >= 2 && val.substr(0,2) == "!%") {
+      let vl = val.length; if(vl >=4 && val.substr(vl-2,2) == "%!") { val = val.substr(2, vl-4);
+        try { new RegExp(`${val}`, "g"); } catch (e) { alert("指定された正規表現が無効です"); return; } reDI = 1;
+      } else { return; }
+    }
+    
+    let elm = document.getElementById("divFtx");
+    if(elm == null) elm = document.getElementById("csvTab");
+    if(elm) { scrollPos = elm.scrollTop; }
+    
+    removeAllChild(paDm);
+    let cond = ""; if(val != "") cond = com.getCond(val);
+    let wg = 0; if(cond.substr(0,3) == "wg:") { wg = 1; cond = cond.substr(3); }
+    tmpCond = cond.split("||");
+    mai.exp = tmpCond.join("|"); stats = [];
+    let tmp = tmpCond; tmpRe = [];
+    if(tmp.length > 0 && tmp[0] != "") {
+      for(let i=0;i<tmp.length;i++) {
+        let targPos = "$1"; let hL = `<span class="highlighter">${targPos}</span>`;
+        let targ = ""; let exp = `${tmp[0]}`; let rep = `${hL}`;
+        if(i > 0) {
+          let px = tmp[i].split("(")[0]; let sx = tmp[i].split(")")[1];
+          targPos = (px != "")? "$2" : "$1"; hL = `<span class="highlighter">${targPos}</span>`;
+          targ= tmp[i].split("(")[1].split(")")[0];
+          if(px != "" && sx != "") { exp = `${px})(${targ})(${sx}`; rep = `$1${hL}$3`; }
+          else if(px != "") { exp = `${px})(${targ}`; rep = `$1${hL}`; }
+          else if(sx != "") { exp = `${targ})(${sx}`; rep = `${hL}$2`; }
+          else { exp = "★error★"; rep = "★error★"; }
+        }
+        tmpRe.push({exp:new RegExp(`(${exp})`, "g"), rep:rep});
+        let p = { hd:`cond(${i})= ${tmpCond[i]}`, mb:[] };
+        let exp2; if(wg) exp2 = exp;
+        else if(/\!/g.exec(exp) != null) exp2 = exp.replace(/\(\?[^\(]+\)/g,"");
+        else exp2 = (/\^/g.exec(exp) != null && targ != "")? targ : exp.replace(/[\(\)]/g,""); 
+        let decWs = decRegEx(exp2); for(let j=0;j<decWs.length;j++) { p.mb.push({w:decWs[j], h:0}); }
+        stats.push(p);
+      }
+    }
+    
+    procId = dTsv? "csvTab" : "txFree"; procArr = dTsv? csvArr : txTarg;
+    retUpdate = demoAreaUpdate(paDm, procId, procArr, "");
+    if(timCI) clearTimeout(timCI);
+    let tv= 2400; timCI = setTimeout(() => {
+      if(subWin && !subWin.closed) { subWin.focus(); }
+      else {
+console.log(`${fName} TO ${tv}(ms)`);
+console.log(`${statsBuf}`);
+      }
+      
+      if(ciBuf.r == "H") { ciBuf.r = ""; }
+      else if(tmpCond.length > 0) { ciBufUpdate(tmpCond[0].split("|")[0]); }
+    }, tv); 
+    break;
+  }
+}
+let ciBuf = {p:0,h:[],r:""};
+function ciBufUpdate(v) {
+  const fName = "ciBufUpdate"; let p= ciBuf;
+  let last = p.h.length-1; let i; let hit = 0; if(v != "" && v != p.h[last]) {
+    for(i=0;i<=last;i++) { if(v == p.h[i]) { hit++; break; }} if(hit) p.h.splice(i, 1);
+    p.h.push(v); p.p = p.h.length-1; 
+  }
+}
+function keyHandler(e) {
+  const fName = "keyHandler";
+  let systemKey = 0; let val = ""; let p;
+  switch(e.keyCode) {
+  case 13:
+    if(document.activeElement != paCm) break;
+    val = paCm.value;
+    if(val[0] == "$") { let valid = 0;
+      if(val == "$mm") { overwriteTx(txBox, mmTx); mmLd = 1; valid = 1; }
+      else if(val.length > 6 && val.substr(0,3) == "$ex") { valid = loadTx(val.substr(1));
+        let msg = `${fName} loadTx `; msg += (valid)? `OK` : `NG`; console.log(msg); 
+      } else {
+        switch(val) {
+        case "$edit" : mdEd = 1; valid = 1; break;
+        case "$exit" : mdEd = 0; valid = 1; break;
+        }
+      } 
+      if(valid) { paCm.value = ""; ciBufUpdate(val); break; }
+    }
+    if(val != "" && mdEd) { let cmd = 0;
+      if(mmLd && val[0] == "$") { let keep = mmTx;
+        if(val == "$dd") { let tmp = mmTx.split("\n"); tmp.splice(0, 1); mmTx = tmp.join("\n"); }
+        else if(val == "$clear") { mmTx = ""; }
+        else if(val == "$write") { mmTx = txBox.value; }
+        if(keep != mmTx) { cmd = 1; paCm.value = ""; ciBufUpdate(val); }
+      }
+      if(cmd == 0) { mmTx += ((cands.length > 0)? cands[candp] : val) + "\n"; paCm.value = ""; ciBufUpdate(val); }
+      if(mmLd) overwriteTx(txBox, mmTx);
+    } break;
+  case 17:
+    if(mdEd) { getCand() } break;
+  case 38:
+  case 40:
+    if(document.activeElement != paCm) break;
+    val = paCm.value; p = ciBuf;
+    if(e.keyCode == 38) { if(p.p == 0) p.p = p.h.length-1; else p.p--; }
+    else if(e.keyCode == 40) { p.p++; if(p.p >= p.h.length) p.p = 0; }
+    p.r = "H";
+    overwriteTx(paCm, p.h[p.p]);
+    break;
+  case 116: systemKey = 1; break;
+  }
+  if(systemKey) return;
+}
+let atTbl = [];
+function makeAt() {
+}
+const rBtn = {ut:"🔲", td:"🟩"};
+let history = [];
+let showHistOpen = 1;
+let tabTitle = "";
+let sgCmd = "";
+function interpret(id) {
+}
+function hisAreaUpdate() {
+}
+function loadHistory(e) {
+}
+function loadTitle(e) {
+}
+let THandleWaitPlay;
+let waitPlay = 0;
+function replaceCmd(e) {
+}
+function saveTxEv(e) {
+}
+let ssWait = 0;
+let ssTH;
+let tmpEv;
+let storedColor = "";
+function ssTim(e) {
+}
+function ssCancel(e) {
+}
+function ssDo() {
+}
+function removeAllChild(pElem) {
+  while(pElem.firstChild) {
+    pElem.removeChild(pElem.firstChild);
+  }
+}
+</script>
+</body>
+</html>

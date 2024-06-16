@@ -1,0 +1,22 @@
+.highlighter {
+  background: linear-gradient(transparent 72%, #DDA0DD 60%);
+  font-weight: 600;
+}
+
+.stFoU1 {
+  font-family: "UD デジタル 教科書体 N-R";
+  font-size: 20px;
+  color: #0f990c;
+}
+
+.stFoU2 {
+  font-family: "UD デジタル 教科書体 N-R";
+  font-size: 20px;
+  color: #2d79e3;
+}
+
+.stFoU3 {
+  font-family: "UD デジタル 教科書体 N-R";
+  font-size: 20px;
+  color: #e32d55;
+}

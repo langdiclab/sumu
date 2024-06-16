@@ -1,11 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>★sumu★</title>
+  <title>ZZZindex</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <link href="style.css" rel="stylesheet">
 </head>
-<body>
-  This is index.html for sumu.
-  now in construction.
+<body onload='init();'>
+  This is index.html for sumu!!!<br>
+
+<div style='display:flex;'>
+<div id= 'listArea' style='width:400px; margin: 0px 8px; background:lightgray;'>listArea</div>
+</div>
+<script type="text/ecmascript" src="dict.js"></script>
+<script type="text/ecmascript" src="editor.js"></script>
+<script type="text/ecmascript">
+
+let run = 0;
+let moWord = "👂";
+function init() {
+  const fName = "init"; 
+  const loc = document.location;
+console.log(fName+` : pathname=${loc.pathname}`);
+console.log(fName+` : port=${loc.port}`);
+if(loc.port == "5500") run = 1;
+console.log(fName+` : search=${loc.search}`);
+console.log(fName+` : hash=${loc.hash}`);
+//console.log(fName+` : origin=${loc.origin}`);
+console.log(fName+` : href=${loc.href}`);
+
+  let tmpHtml = ""; let cond = "";
+  if(loc.href[loc.href.length-1] == "?" && loc.search == "") cond = "?";
+  else cond = decodeURI(loc.search); 
+console.log(fName+` : cond=${cond}`);
+  
+  let appKey = "";
+  if(cond[0] == "?") {
+    const app = [
+      [""       ,"★only ? given!★"],
+      ["calc","★"],
+      ["fifa","★"], //
+      ["recipe","★★"],
+      ["todo","★★★"],
+      [" prefixSP","★"],
+      ["漢字","★"],
+      [" 先頭空白","★"],
+    ];
+
+    const msg1 = `url bound with ${cond}`;
+    let okMsg = { sty:"ftOK", msg:"your condition is great!"};
+    const errMsg = { sty:"ftErr", msg:"your condition is not found in app."}; let p; 
+
+    for(let i=0; i< app.length; i++) { let ap = app[i]; 
+      if(cond.substr(1) == ap[0]) { if(i) appKey = ap[0]; else appKey = "special"; okMsg.msg += " "+ap[1]; break; }
+    }
+    if(appKey != "") p = okMsg; else p = errMsg; const msg = `<span class = ${p.sty}>${p.msg}</span>`;
+    tmpHtml = msg1+" ➔ "+msg;
+  } else {
+    const toTime = 32;
+    const toPath = "/langdiclab/sumu/editor.html";
+    tmpHtml = `This is top index html. redirect to editor.html after ${toTime} sec.`; 
+    setTimeout(() => {
+       switch(run) {
+       case 0: loc.pathname = "/G:/eSvg/gumuEditor.html"; break; 
+       case 1: loc.pathname = toPath; break; 
+       case 2: loc.pathname = toPath; break; 
+       }
+    }, toTime*1000);
+
+  }
+  document.body.insertAdjacentHTML('beforeend', `<div id= msgArea style= "color:red;">${tmpHtml}</div>`);
+  
+  let imgPath; if(run == 2) imgPath = "images/"; else imgPath = "_release/_images/";
+  switch(appKey) {
+  case "fifa" : document.createElement
+    let img = document.createElement('img'); 
+    img.style = `margin: 8px;`; document.body.append(img);
+    img.src = imgPath+"fifa_col16_nofs.png"; img.alt = "";
+    break;
+  case "special" :
+    selected.textContent = moWord;
+    cPath.addEventListener("mouseover", function(e) {
+console.log(`e.target.id=${e.target.id}`); 
+      },false); 
+    break; 
+  }
+
+
+  document.title = ttIdx;
+
+}
+
+let dj = [];
+let ai = [];
+
+function ssUL2(pElem,id,opt,arr) {
+}
+
+let cand = [];
+let myTag = { tag:"" ,p:0 };
+let itemCnt = 1;
+let tmpItems = [];
+let tId = undefined;
+
+</script>
 </body>
 </html>
