@@ -15,7 +15,7 @@
 <script type="text/ecmascript" src="editor.js"></script>
 <script type="text/ecmascript">
 
-let run = 0;
+let run = 2;
 let moWord = "👂";
 function init() {
   const fName = "init"; 
@@ -56,12 +56,11 @@ console.log(fName+` : cond=${cond}`);
     if(appKey != "") p = okMsg; else p = errMsg; const msg = `<span class = ${p.sty}>${p.msg}</span>`;
     tmpHtml = msg1+" ➔ "+msg;
   } else {
-    const toTime = 32;
+    const toTime = 4;
     const toPath = "/langdiclab/sumu/editor.html";
     tmpHtml = `This is top index html. redirect to editor.html after ${toTime} sec.`; 
     setTimeout(() => {
        switch(run) {
-       case 0: loc.pathname = "/G:/eSvg/gumuEditor.html"; break; 
        case 1: loc.pathname = toPath; break; 
        case 2: loc.pathname = toPath; break; 
        }
