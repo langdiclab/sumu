@@ -71,6 +71,8 @@ gp: function(str) { let ret = ""; let tmp = str.split(","); for(let i=0;i<tmp.le
 getCharSf: function(p) { let ret = ""; for(let i=0;i<p.length;i++) { ret += this.kj[p[i].s].substr(this.cv(p[i].pos),1); } return(ret); },
 ss: function(p) { let par = []; for(let i=0;i<p.length/2;i++) { par.push({s:0, pos:p.substr(i*2,2)}); } return(this.getCharSf(par)); },
 }
+const cgSC = "㋐㋑㋒";
+const reSC = new RegExp("["+cgSC+"]",'g');
 let mus = {
   basRe: [],
   pnOn: [],
@@ -80,8 +82,7 @@ basReInit: function() {
   let reOn = this.get(this.pnOn); if(reOn != "") this.basRe.push({id:"On", exp: new RegExp(`(${reOn})`, "g"), rep:"㋐$1㋐"});
   let rePn = this.getPn(); if(rePn != "") this.basRe.push({id:"Pn", exp: new RegExp(`(${rePn})`, "g"), rep:"㋑$1㋑"});
   let reGn = this.get(this.pnGn); if(reGn != "") {
-  let GnExp = `(${reGn})(?!${sfPnHr}|[${cgKt}${cgKj}])`;
-  this.basRe.push({id:"Gn", exp: new RegExp(`${GnExp}`, "g"), rep:"㋒$1㋒"});
+    const GnExp = `(${reGn})`; this.basRe.push({id:"Gn", exp: new RegExp(`${GnExp}`, "g"), rep:"㋒$1㋒"});
   }
   this.basRe.push({id:"$ust1", exp: null, rep:"㋐$1㋐"});
   this.basRe.push({id:"$ust2", exp: null, rep:"㋑$1㋑"});
@@ -202,6 +203,29 @@ checkTag: function(cond) {
   if(pushPn != "") mus.pnPn.push(pushPn);
   if(pushGn != "") mus.pnGn.push(pushGn);
 },
+
+parCond: function(conds,i,sb) {
+  const fNm = "parCond";
+  let ret = conds[i].cond;
+  if(/[\+-]*[1-9]*\?/g.exec(ret) != null) {
+    if(/[\+-][1-9]*\?/g.exec(ret) != null) {
+      const mai = [...ret.matchAll(/[\+-][1-9]*\?/g)]; for(let j=0;j<mai.length;j++) {
+      const p = mai[j][0]; const ofs = (p[1] == "?")? 1 : parseInt(p[1]);
+      const ti = (p[0] == "+")? i+ofs : i-ofs; ret = ret.replace(/[\+-][1-9]*\?/, conds[ti].cond);
+    }} else if(sb != null) {
+      const xf = sb.cond.split("~"); let tmp = [];
+      if(xf.length > 1) { const xfm = xf[1].split(" "); for(let i=0;i<xfm.length;i++) { tmp.push("x~"+xfm[i]); }}
+      else { tmp = decRegEx(sb.cond); }
+      const mai = [...ret.matchAll(/\?[1-9]*/g)]; for(let j=0;j<mai.length;j++) {
+      const p = mai[j][0]; const ofs = (p == "?")? 0 : parseInt(p[1])-1;
+        for(let k=0;k<tmp.length;k++) { if(ofs == k) { ret = ret.replace(/\?[1-9]*/g, tmp[k]); break; }}
+      }
+    }
+    const ck = ret.split("x~"); if(ck.length > 2) ret = "x~" + ck.join("");
+  }
+  return(ret);
+},
+
 getCond: function(val) {
   const fNm = "getCond"; let cond = ""; let len = val.length;
   if(reDI == 0) { if(/[.*+?^=!:${}()|[\]\/\\]/.exec(val) != null) { return(escapeRegExp(val)); }}
@@ -209,11 +233,19 @@ getCond: function(val) {
     let p = val.split("%"); for(let i=0;i<wgPS.length;i++) { if(p[0] == wgPS[i].key) { wgCond = getWGOpt(i,p); break; }
       let cd = wgPS[i].key; cd = cd.replace(/[aiueo]/g, ""); if(p[0] == cd) { wgCond = getWGOpt(i,p); break; }
     }
-  } if(wgCond != "") return("wg:"+wgCond); for(let i=0;i<conds.length;i++) {
-    let cr = conds[i].romz; if(cr[0].toLowerCase() != val[0].toLowerCase()) continue;
-    if(cr.substr(0,len) == val) { cond = conds[i].cond; break; } if((/[A-Z]/.exec(cr[0]) != null)) {
-      let tmp = cr.toLowerCase(); if(tmp.substr(0,len) == val) { cond = conds[i].cond; break; }}
+  } if(wgCond != "") return("wg:"+wgCond); 
+
+  let sb = null; for(let i=0;i<conds.length;i++) {
+    const p = conds[i]; let cr = (p.romz.substr(0,2) == "-?")? conds[i-1].romz+p.romz.substr(2) : p.romz;
+    if(p.romz[0] == "?") p.romz = sb.romz+p.romz.substr(1);
+    if(cr[0].toLowerCase() == val[0].toLowerCase()) {
+      if(cr.substr(0,len) == val) { cond = com.parCond(conds,i,sb); break; }
+      if((/[A-Z]/.exec(cr[0]) != null)) { let tmp = cr.toLowerCase();
+        if(tmp.substr(0,len) == val) { cond = com.parCond(conds,i,sb); break; }
+      }
+    } if(p.alt[0] == "!") sb = p;
   }
+
   if(cond.length > 2 && /x/g.exec(cond) != null) { let p = cond.split("~");
     cond = ""; let fo = p[0].split("x"); let da = p[1].split(" "); let ca = []; for(let i=0;i<da.length;i++) { ca.push(cap.ss(da[i])); }
     for(let i=0;i<ca.length;i++) { cond += fo[i] + ca[i] } if(fo.length > ca.length) cond += fo[fo.length-1];
@@ -243,13 +275,16 @@ makeScrollList: function(pElem, id, csv, opt) { const fName = "makeScrollList";
     div.setAttribute("style",`position:absolute; top:0px; left:${tmpL}px; width:${w}px; outline: 1px solid;`); divs.push(div);
   }
   let listCnt = 0; let listH = 0; let hitRow = 0; let hh = 28;
+
   for(let i=0;i<csv.length;i++) { listItem = (i == 0)? head : document.createElement("li");
     if(spCnt) { span = document.createElement("span"); span.textContent = "HD"; listItem.appendChild(span); }
     let tmpSpan = 0; let tmp = csv[i]; let skip = 0; tmp = mus.ap(tmp);
-    if(i > 0 && tmpRe.length > 0) { let hit = 0; for(let j=0;j<tmpRe.length;j++) { if(tmpRe[j].exp.exec(tmp) == null) {
-      if(fMd == 1) { skip++; continue; }} else { tmp = tmp.replace(tmpRe[j].exp, tmpRe[j].rep); hit++; }}
-      if(hit > 0) hitRow++; if(tmpRe.length == skip) continue;
+
+    if(i > 0 && tmpRe.length > 0) { let hit = 0; for(let j=0;j<tmpRe.length;j++) {
+      const res = com.ah(tmpRe[j], tmp); tmp = res.ret; hit += res.hit; skip += res.skip;
+      } if(hit > 0) hitRow++; if(tmpRe.length == skip) continue;
     }
+
     if(/[㋐㋑㋒]/.exec(tmp) != null) tmp = mus.rc(tmp); tmp = tmp.split("\t"); let crCnt = 1;
     for(let j=0;j<tmp.length;j++) { span = document.createElement("span");
       let inner = tmp[j].split("▼"); if(inner.length > 1) { tmp[j] = inner.join("<br>"); if(inner.length > crCnt) crCnt = inner.length; }
@@ -273,5 +308,20 @@ makeScrollList: function(pElem, id, csv, opt) { const fName = "makeScrollList";
   list.setAttribute("style",styleDef); pElem.appendChild(list);
   if(scrollPos > 0) document.getElementById("csvTab").scrollTop = scrollPos;
   statsProc(csv.slice(1).join("\n"), hitRow); return 0;
+},
+as: function(item, cNm) { return (`<span class="${cNm}">${item}</span>`); },
+ah: function(re,tmp) {
+  let ret = tmp; let hit = 0; let skip = 0; if(re.exp.exec(tmp) == null) {
+    let a = []; let s = ""; let dc = ""; if(reSC.exec(tmp) != null) {
+    const sConds = decRegEx(tmpCond[0]); let crossTarg = []; for(let i=0;i<sConds.length;i++) {
+      let re = new RegExp(sConds[i],'g'); if(re.exec(tmp.replace(reSC,"")) != null) { crossTarg.push(sConds[i]); }
+    }
+  const sc = cgSC; if(crossTarg.length > 0) { for(let i=0;i<sc.length;i++) { if(!tmp.includes(sc[i])) continue;
+  const w = crossTarg[0]; for(let k=1;k<w.length;k++) {
+    s = w.substr(0,k)+sc[i]+ w.substr(k); a = tmp.split(s); if(a.length > 1) { dc = sc[i]; break; }
+  }}}} if(dc != "") { const cNm = "highlighter";
+    const t = s.split(dc);  s = this.as(t[0], cNm)+dc+this.as(t[1], cNm); ret = a.join(s); hit++;
+  } else { if(fMd == 1) skip++; }
+  } else { ret = tmp.replace(re.exp, re.rep); hit++; } return({ret,hit,skip});
 },
 }

@@ -195,59 +195,119 @@ let condsTxJp =
 `romz, cond, alt
 AtoChi, x~cT14, AtC
 BaSho, x~0P0J, BS
+BoKou, x~1o6A, BKu
 BouSai, x~5WcN, BuSi
+BuBun, x~0T6r, BBn
 BunKa, x~0U5e, BnK
+BunYa, x~6r15, BnY
+ChuuGoku, x~281u, CuGk||pnNat
+-?Go, -?x~5v, -?G
+ChuuKo, x~282z, !||CuK
+?Sha, ?x~1v, ?S
 ChuuShin, x|x~280D cOcC, CuSn
+DaiGaku, x~2767, !||DiGk
+?In, ?x~c4, ?In
+?Sei, ?x~3e, ?Si
+EiGo, x~7I5v, EiG
+EiYou, x~4F6l, !||EiYu
+?Shi, ?x~a7, ?S
 GaiKan, [x]x~2pcE 5p, GiKn
 HacChouBori, x~87aCcH, HCuBr||★an
 HatsuDen, x~6L9q, HtDn
+HenKa, x~3B5e, HnK
+HiKaku, x~5x8U , HKk
 Hinan, [x]x~aZ6X 8y, HNn
 HiroBa, x~2G0P, HrB
 HiroShima, x~2Gcv, HrSm||★gn
 HiroShimaJou, x~2GcvcI, HrSmJu
 hito, x~0a, ht
+HouHou, x~0%6Q, HuHu
 IBaSho, x~8t0P0J, IBS
+IpPou, x[x]~80 0%6f, IPu
+IRyou, x~6ybq, IRu
 JiBun, x~1F6r, JBn
+JiDai, x~023C, JDi
+JinJa, x~791P, JnJ
+JinSei, x~0a3e, JnSi
+JiShaku, x~d1d2, JSk
+JiYuu, [x]x~1F0u 7r, JYu
+JuuTaku, x~3&a8, JuTk
+KaiGai, x~102p, KiGi
 KaiMaku , x~5Ud0, KiMk
+KaiSen, x~5n9z, KiSn
+KaiSha, x~311P, KiS
 KaiYuu, x~5n32, KiYu
+KaKaku, x~947C, KKk
 KakuToku, x~cW4m, KkTk
 KamiYaChou, x~cL0Z0W, KmYCu||★an
 KanBi, x|[x]x~9u4Q cRcS 1k, KnB
+KanKoku, x|x~cm1u 3Z5z, !||knkk
+?Go, ?x~5v, ?G
 KanKou, x|[x]x~5p5S 5FcX 3g, KnKu
+KanKyou, x~9R9S, KnKu
 KaNou, x|x|x|x~7o7p 5ecU 4AbP cV15, KNu||★pn
+KanShin, [x]x~7x6T 0D, KnSn
 KeiKaku, x~5L0x, KiKk
+KenKyuu, x~7Y8p, !||KnKu
+?Sha, ?x~0q, ?S
+?Sho, ?x~0J, ?S
 KenSetsu, x~427Q, KnSt
 KiBo, x~blbm, KB
 KiBou, x~a3bj, KBu
+KiGen, x|x~1V4u 7S3H, KGn
+KiHon, x~9a0X, KHn
 kinou, x|x|x~9s20 7S7p 4sbP, knu
+KiSo, x|x|x~9acq 3od3 24d4, KS||★gn
+KoDomo, x~0s4P, KDm
+KokuGo, x~1u5v, KkG
+KotoBa, x~3d0N, KtB
 KouEn, x[x]|x|x[x]~1m b4aE craE 2l 1Rc5, KuEn
 KuFuu, x~a%af, KFu
 KyoRi, x~cM5g, KR
 KyoTen, x~bz6J, KTn
+KyouMi, x~ca0v, KuM
 MiRai, x~773K, MRi
 MiRyoku, x~6C0H, MRk
+MokuTeki, x~0l6P, MkTk
+MonoGatari, x~0t5v, MnGtr
 NakaMa, x~bh03, NkM||★pn
 NaMae, x~0e2k, NMe
 NanKin, x|x~cPcQ 2N8j, NnKn||★gn
+NiHon, x|[2x]x~200X 81 0X, !||NHn
+?BunKa, ?x~0U5e, ?BnK
+?Go, ?x~5v, ?G
+?Shi, ?x~9t, ?S
+NipPon, x~200X, NPn
 OuJa, x~cY0q, OuJ
+RekiShi, x~a09t, RkS
 RiYou, x|x~8x6h 6R6&, RYu
+RiYuu, x~6R7r, RYu
+SakuHin, x~470F, SkHn
 SeiBi, x~5B4Q, SiB
+SeiHin, x~910F, SiHn
+SeiSuu, x~5B0z, SiSu
+SenMon, x~761p, SnMn
+ShaKai, x~1P31, SKi
 ShiAi, x~4330, SAi
 shinai, x|x~1i2o cFcG, sni
 ShinKa, x|x|x~4M5e 2I94 cC2d, SnK
 ShinKin, x|x|x|x~0r2r 0D7c 2IcD 8z25, SnKn
 ShiSetsu, x|x|x~aO7Q 456G 1G7Q, SSt
+ShitaBi, x~2d22, Stb
+ShiYou, [x]x|x~45431G 6h 4V7K, SYu
 SouGyou, x~cZ9p, SuGu
 TaiZai, x~cK3a, TiZi
 TenKai, x~ag5U, TnKi
+TenKi, x|x[x]~1h0B 3N 7S4L, TnK
 ToDouFuKen, x~7P1JaLb1, tdfkn||%%
 ToShin, x~7P0D, TSn
 Tsubasa, x~c&, Tbs
+YaBou, x~15bj, YBu
 YakuWari, x~cJ6v, YkWr
 YoTei, x~703T, YTi
 Yume, x~7n, Ym
 YuRai, x~7r3K, YRi
-zz, ZOZO|ゾゾ, zz`;
+zz, ZZ, zz`;
 
 let convNotePartsJp = [];
 let convNotePartsJpTx =

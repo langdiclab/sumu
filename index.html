@@ -57,7 +57,7 @@ console.log(fName+` : cond=${cond}`);
     tmpHtml = msg1+" ➔ "+msg;
   } else {
     const toTime = 4;
-    const toPath = "/sumu/editor.html";
+    const toPath = loc.pathname.replace(/\/sumu\/.*$/g,"/sumu/editor.html");
     tmpHtml = `This is top index html. redirect to editor.html after ${toTime} sec.`; 
     setTimeout(() => {
        switch(run) {

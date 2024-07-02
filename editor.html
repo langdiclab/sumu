@@ -66,8 +66,6 @@ let dTsv = 0;
 let txTarg = [];
 function txBoxUpdate(e) {
   const fName = "txBoxUpdate";
-console.log(`${fName}: target.id=${e.target.id}`);
-  
   let val = e.target.value; let retUpdate = {}; let procId, procArr;
   switch(e.target.id) {
   case "paTx":
@@ -83,9 +81,7 @@ console.log(`${fName}: target.id=${e.target.id}`);
       if(i == 0) { if(tmpCnt < 2) { 
 console.log(`${fName}: 1行目 tabがありません`); 
         break;} tabCnt = tmpCnt; continue; }
-      if(tabCnt != tmpCnt) { 
-console.log(`${fName}: tab数不一致 Line${i+1} ${p.substr(0,24)}`);
-      dTsv = 0; break; } else { dTsv = 1; }
+      if(tabCnt != tmpCnt) { dTsv = 0; break; } else { dTsv = 1; }
     }
     if(dTsv && tabCnt > 0) {
 console.log(`${fName}: tabCnt=${tabCnt}`);
@@ -146,6 +142,11 @@ console.log(`${fName}: tabCnt=${tabCnt}`);
         stats.push(p);
       }
     }
+
+  if(tmpCond.length == 1 && tmpRe.length ==1) {
+    const oldExp = tmpRe[0].exp; const newExp = new RegExp(mus.ap("("+tmpCond[0]+")"), 'g');
+    if(oldExp != newExp) tmpRe[0].exp = newExp;
+  }
     
     procId = dTsv? "csvTab" : "txFree"; procArr = dTsv? csvArr : txTarg;
     retUpdate = demoAreaUpdate(paDm, procId, procArr, "");
